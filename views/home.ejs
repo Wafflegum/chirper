@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <link rel="stylesheet" href="global.css">
+    </head>
+
+    <body>
+
+        <div class="sidebar-container">
+            <div class="logo">Chirp</div>
+            <div class="nav" id="homeNav">
+                <div class="nav-icon"></div>
+                <div class="nav-text">Home</div>
+            </div>
+            <div class="nav" id="exploreNav">
+                <div class="nav-icon"></div>
+                <div class="nav-text">Explore</div>
+            </div>
+            <div class="nav" id="notifNav">
+                <div class="nav-icon"></div>
+                <div class="nav-text">Notifications</div>
+            </div>
+            <div class="nav" id="profileNav">
+                <div class="nav-icon"></div>
+                <div class="nav-text">Profile</div>
+            </div>
+            <div class="nav" id="chirpNav">
+                <div class="nav-icon"></div>
+                <div class="nav-text">Chirp</div>
+            </div>
+        </div>
+
+        <main>
+            <section id="post-content">
+                <div class="content-category-container">
+                    <div class="content-category" id="forYou">
+                        For you
+                    </div>
+                    <div class="content-category" id="following">
+                        Following
+                    </div>
+                </div>
+                <div class="create-post-container">
+                    <div class="dp"></div>
+                    <form action="/create-post" method="POST">
+                        <input type="text" name="create-post" id="createPost" maxlength="280">
+                        <button type="submit">Post</button>
+                </div>
+                <div class="posts-container">
+
+                </div>
+            </section>
+            <section id="misc">
+                <div class="search-bar-container">
+                    <div class="search-icon"></div>
+                    <form action="/search">
+                        <input type="text" name="search" id="searchInput" maxlength="30" placeholder="Search">
+                        <!-- <button type="submit">Search</button> -->
+                    </form>
+                </div>
+            </section>
+            </div>
+        </main>
+
+    </body>
+
+</html>
