@@ -6,10 +6,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Document</title>
         <link rel="stylesheet" href="global.css">
+        <script defer type="text/javascript" src="/app.js"></script>
     </head>
 
     <body>
-
         <div class="sidebar-container">
             <div class="logo">Chirp</div>
             <div class="nav" id="homeNav">
@@ -51,6 +51,7 @@
                     <form action="/create-post" method="POST">
                         <textarea name="content" id="createPost" placeholder="What's happening?"></textarea>
                         <div id="buttons">
+                            <div class="character-counter" id="postCharCounter">0</div>
                             <button type="submit">Post</button>
                     </form>
                 </div>

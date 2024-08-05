@@ -21,6 +21,7 @@ const path = require('path')
 app.set('views', path.join(__dirname, 'views'))
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.static(path.join(__dirname, 'assets')))
+app.use(express.static(path.join(__dirname, 'client')))
 
 app.use(
 	session({
@@ -54,8 +55,6 @@ app.get('/register', (req, res) => {
 // manages the register functionality.
 app.post('/register', async (req, res) => {
 	let { username, email, password, confPassword } = req.body
-
-	console.log({ username, email, password })
 
 	let errors = []
 
@@ -131,6 +130,20 @@ app.post(
 		failureFlash: true,
 	})
 )
+
+app.post('/create-post', (req, res) => {
+	let { content } = req.body
+
+	let user = req.user
+
+	if (req.isAuthenticated()) {
+		pool.query('INSERT INTO posts (userid, content) VALUES ($1, $2)', [
+			user.id,
+			content,
+		])
+		res.redirect('/')
+	}
+})
 
 app.listen(PORT, (err, res) => {
 	console.log('Now listening on port ' + PORT)
