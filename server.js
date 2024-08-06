@@ -52,6 +52,25 @@ app.get('/register', (req, res) => {
 	}
 })
 
+// Formats the date to YYYY-MM-DD as per PSQL's date format.
+function formatDate(date) {
+	let d
+	if (date === null || date === undefined) {
+		d = new Date()
+	} else {
+		d = new Date(date)
+	}
+
+	let month = '' + (d.getMonth() + 1),
+		day = '' + d.getDate(),
+		year = d.getFullYear()
+
+	if (month.length < 2) month = '0' + month
+	if (day.length < 2) day = '0' + day
+
+	return [year, month, day].join('-')
+}
+
 // manages the register functionality.
 app.post('/register', async (req, res) => {
 	let { username, email, password, confPassword } = req.body
@@ -134,13 +153,15 @@ app.post(
 app.post('/create-post', (req, res) => {
 	let { content } = req.body
 
+	let date = formatDate()
+
 	let user = req.user
 
 	if (req.isAuthenticated()) {
-		pool.query('INSERT INTO posts (userid, content) VALUES ($1, $2)', [
-			user.id,
-			content,
-		])
+		pool.query(
+			'INSERT INTO posts (userid, content, date) VALUES ($1, $2, $3)',
+			[user.id, content, date]
+		)
 		res.redirect('/')
 	}
 })

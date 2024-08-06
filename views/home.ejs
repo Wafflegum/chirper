@@ -10,29 +10,45 @@
     </head>
 
     <body>
-        <div class="sidebar-container">
-            <div class="logo">Chirp</div>
-            <div class="nav" id="homeNav">
-                <div class="nav-icon"></div>
-                <div class="nav-text">Home</div>
-            </div>
-            <div class="nav" id="exploreNav">
-                <div class="nav-icon"></div>
-                <div class="nav-text">Explore</div>
-            </div>
-            <div class="nav" id="notifNav">
-                <div class="nav-icon"></div>
-                <div class="nav-text">Notifications</div>
-            </div>
-            <div class="nav" id="profileNav">
-                <div class="nav-icon"></div>
-                <div class="nav-text">Profile</div>
-            </div>
-            <div class="nav" id="chirpNav">
-                <div class="nav-icon"></div>
-                <div class="nav-text">Chirp</div>
-            </div>
-        </div>
+        <header>
+            <span>
+                <div class="sidebar-container">
+                    <div class="logo">Chirp</div>
+                    <div class="nav" id="homeNav">
+                        <div class="nav-icon"></div>
+                        <div class="nav-text">Home</div>
+                    </div>
+                    <div class="nav" id="exploreNav">
+                        <div class="nav-icon"></div>
+                        <div class="nav-text">Explore</div>
+                    </div>
+                    <div class="nav" id="notifNav">
+                        <div class="nav-icon"></div>
+                        <div class="nav-text">Notifications</div>
+                    </div>
+                    <div class="nav" id="profileNav">
+                        <div class="nav-icon"></div>
+                        <div class="nav-text">Profile</div>
+                    </div>
+                    <div class="nav" id="chirpNav">
+                        <div class="nav-icon"></div>
+                        <div class="nav-text">Chirp</div>
+                    </div>
+                </div>
+                <div class="profile-preview">
+                    <div class="dp">
+                        <img src="/dev/dp.png" alt="">
+                    </div>
+                    <div class="user-info">
+                        <div class="username">username</div>
+                    </div>
+                    <!-- This is the button for logging out or logging in another account -->
+                    <div class="account-action">
+                        <button id="accountAction"><img src="/images/3dots.png" alt=""></button>
+                    </div>
+                </div>
+            </span>
+        </header>
 
         <main>
             <section id="post-content">
@@ -44,6 +60,7 @@
                         Following
                     </div>
                 </div>
+
                 <div class="create-post-container">
                     <div class="dp">
                         <img src="/dev/dp.png" alt="">
@@ -52,12 +69,12 @@
                         <textarea name="content" id="createPost" placeholder="What's happening?"></textarea>
                         <div id="buttons">
                             <div class="character-counter" id="postCharCounter">0</div>
-                            <button type="submit">Post</button>
+                            <button type="submit" id="postBtn">Post</button>
+                        </div>
                     </form>
                 </div>
-                <div class="posts-container">
 
-                </div>
+                <div class="posts-container"></div>
             </section>
             <section id="misc">
                 <div class="search-bar-container">
