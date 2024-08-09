@@ -1,0 +1,98 @@
+
+.dp
+    height: 2.25rem
+    width: 2.25rem
+    min-width: fit-content
+    text-align: center
+    background: rgb(43, 43, 43)
+    border-radius: 50%
+
+    img
+        height: 100%
+        width: 100%
+        border-radius: 50%
+        object-fit: cover
+
+#profile-section
+    header
+        display: flex
+        flex-direction: row
+        gap: 2rem
+
+        padding: .5rem
+
+        #backBtn
+            flex: 1 1 5%
+
+            padding: 0
+
+            outline: 0
+            border: 0
+            background: none
+
+            img
+                width: 1.25rem
+                height: 1.25rem
+
+        .header-info
+            flex: 1 1 95%
+
+            .postCount
+                font-size: 0.7rem
+                font-weight: 300
+                color: var(--dark-secondary-text-color)
+
+    .user-info
+        display: flex
+        flex-direction: column
+        gap: 0.25em
+
+        padding: 1em
+        box-sizing: border-box
+
+        border-bottom: 1px solid var(--border-color)
+
+        .user-dp
+            display: flex
+            flex-direction: row
+
+            .dp
+                width: 5rem
+                height: 5rem
+
+            .button-container
+                flex: 1 1 auto
+
+                display: flex
+                justify-content: end
+                align-items: center
+
+                button
+
+                    padding: 0.5rem 1rem 0.5rem 1rem
+
+                    background: none
+                    outline: 0
+
+                    border: 2px solid var(--border-color)
+                    border-radius: 1rem
+
+                    color: white
+                    font-weight: 600
+
+                    cursor: pointer
+
+                    &:hover
+                        border: 2px solid #bebebe
+
+    .user-stats
+        display: flex
+        flex-direction: row
+        gap: 1rem
+
+        font-size: var(--font-content)
+
+        .followCount
+            :nth-child(2)
+                color: var(--dark-secondary-text-color)
+                font-weight: 300

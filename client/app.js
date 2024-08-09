@@ -1,12 +1,24 @@
-const createPost = document.getElementById('createPost')
+const createPostInput = document.getElementById('createPost')
 const postCharCounter = document.getElementById('postCharCounter')
 const postBtn = document.getElementById('postBtn')
+
+const createPostForm = document.getElementById('createPostForm')
+
+// * navigations
 
 let postCharCount = 0
 let characterLimit = 200
 
-createPost.addEventListener('input', (e) => {
-	postCharCount = createPost.textLength
+createPostForm.addEventListener('keydown', (e) => {
+	if (e.key == 'Enter' && !e.shiftKey) {
+		e.preventDefault()
+		createPostForm.submit()
+		console.log('submitted')
+	}
+})
+
+createPostInput.addEventListener('input', (e) => {
+	postCharCount = createPostInput.textLength
 
 	postCharCounter.innerHTML = postCharCount
 

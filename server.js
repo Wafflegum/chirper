@@ -36,9 +36,29 @@ app.use(passport.session())
 
 app.use(flash())
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
 	if (req.isAuthenticated()) {
-		res.render('home')
+		const results = await pool.query('SELECT * FROM posts')
+
+		const unsortedData = await Promise.all(
+			results.rows.map(async (entry) => {
+				const userResult = await pool.query('SELECT * FROM users WHERE id = $1', [entry.userid])
+
+				const user = userResult.rows[0]
+
+				return {
+					username: user.username,
+					content: entry.content,
+					date: formatDate(entry.date),
+				}
+			})
+		)
+
+		const postsData = unsortedData.sort()
+
+		console.log(req.user.username)
+
+		res.render('home', { userData: req.user.username, data: postsData })
 	} else {
 		res.redirect('login')
 	}
@@ -92,14 +112,8 @@ app.post('/register', async (req, res) => {
 	} else {
 		const hashedPassword = await bcrypt.hash(password, 10)
 
-		const emailQuery = await pool.query(
-			'SELECT * FROM users WHERE email = $1',
-			[email]
-		)
-		const usernameQuery = await pool.query(
-			'SELECT * FROM users WHERE username = $1',
-			[username]
-		)
+		const emailQuery = await pool.query('SELECT * FROM users WHERE email = $1', [email])
+		const usernameQuery = await pool.query('SELECT * FROM users WHERE username = $1', [username])
 
 		// Checks if the email and username is already taken. If true, push error messages in errors array
 		if (emailQuery.rows.length > 0) {
@@ -158,11 +172,37 @@ app.post('/create-post', (req, res) => {
 	let user = req.user
 
 	if (req.isAuthenticated()) {
-		pool.query(
-			'INSERT INTO posts (userid, content, date) VALUES ($1, $2, $3)',
-			[user.id, content, date]
-		)
+		pool.query('INSERT INTO posts (userid, content, date) VALUES ($1, $2, $3)', [user.id, content, date])
 		res.redirect('/')
+	}
+})
+
+app.get('/dev/user', (req, res) => {
+	if (req.isAuthenticated()) {
+		let user = req.user
+		res.send(user)
+	}
+})
+
+app.get('/:username', async (req, res) => {
+	const username = req.params.username
+
+	const userData = await pool.query('SELECT * FROM users WHERE username = $1', [username])
+
+	if (userData.rows.length > 0) {
+		const rawPostsData = await pool.query('SELECT * FROM posts WHERE userid = $1', [userData.rows[0].id])
+
+		const postsData = rawPostsData.rows.map((post) => {
+			return {
+				username: userData.rows[0].username,
+				content: post.content,
+				date: formatDate(rawPostsData.date),
+			}
+		})
+
+		res.render('profile', { userData: userData.rows[0], postsData: postsData })
+	} else {
+		res.send('No users found')
 	}
 })
 

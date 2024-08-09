@@ -1,0 +1,87 @@
+.dp {
+  height: 2.25rem;
+  width: 2.25rem;
+  min-width: fit-content;
+  text-align: center;
+  background: rgb(43, 43, 43);
+  border-radius: 50%;
+}
+.dp img {
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+#profile-section header {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  padding: 0.5rem;
+}
+#profile-section header #backBtn {
+  flex: 1 1 5%;
+  padding: 0;
+  outline: 0;
+  border: 0;
+  background: none;
+}
+#profile-section header #backBtn img {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+#profile-section header .header-info {
+  flex: 1 1 95%;
+}
+#profile-section header .header-info .postCount {
+  font-size: 0.7rem;
+  font-weight: 300;
+  color: var(--dark-secondary-text-color);
+}
+#profile-section .user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25em;
+  padding: 1em;
+  box-sizing: border-box;
+  border-bottom: 1px solid var(--border-color);
+}
+#profile-section .user-info .user-dp {
+  display: flex;
+  flex-direction: row;
+}
+#profile-section .user-info .user-dp .dp {
+  width: 5rem;
+  height: 5rem;
+}
+#profile-section .user-info .user-dp .button-container {
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+#profile-section .user-info .user-dp .button-container button {
+  padding: 0.5rem 1rem 0.5rem 1rem;
+  background: none;
+  outline: 0;
+  border: 2px solid var(--border-color);
+  border-radius: 1rem;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+#profile-section .user-info .user-dp .button-container button:hover {
+  border: 2px solid #bebebe;
+}
+#profile-section .user-stats {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  font-size: var(--font-content);
+}
+#profile-section .user-stats .followCount :nth-child(2) {
+  color: var(--dark-secondary-text-color);
+  font-weight: 300;
+}
+
+/*# sourceMappingURL=profile.css.map */

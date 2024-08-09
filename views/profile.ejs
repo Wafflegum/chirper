@@ -4,9 +4,9 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
-        <link rel="stylesheet" href="css/global.css">
-        <script defer type="text/javascript" src="/app.js"></script>
+        <link rel="stylesheet" href="/css/global.css">
+        <link rel="stylesheet" href="/css/profile.css">
+        <title>Profile</title>
     </head>
 
     <body>
@@ -26,7 +26,7 @@
                         <div class="nav-icon"></div>
                         <div class="nav-text">Notifications</div>
                     </div>
-                    <a class="nav" id="profileNav" href="/<%= userData %>">
+                    <a class="nav" id="profileNav" href='/<%= userData.username %>''>
                         <div class="nav-icon"></div>
                         <div class="nav-text">Profile</div>
                     </a>
@@ -34,7 +34,6 @@
                         <div class="nav-icon"></div>
                         <div class="nav-text">Chirp</div>
                     </div>
-                </div>
                 </div>
                 <div class="profile-preview">
                     <div class="dp">
@@ -52,31 +51,45 @@
         </navbar>
 
         <main>
-            <section id="post-section">
-                <div class="content-category-container">
-                    <div class="content-category" id="forYou">
-                        For you
+            <section id="profile-section">
+                <header>
+                    <button id="backBtn"><img src="/images/back.svg" alt=""></button>
+                    <div class="header-info">
+                        <div class="username"><%= userData.username %></div>
+                        <div class="postCount">0 posts</div>
                     </div>
-                    <div class="content-category" id="following">
-                        Following
-                    </div>
-                </div>
+                </header>
 
-                <div class="create-post-container">
-                    <div class="dp">
-                        <img src="/dev/dp.png" alt="">
-                    </div>
-                    <form action="/create-post" method="POST" id="createPostForm">
-                        <textarea name="content" id="createPost" placeholder="What' s happening?"></textarea>
-                        <div id="buttons">
-                            <div class="character-counter" id="postCharCounter">0</div>
-                            <button type="submit" id="postBtn">Post</button>
+                <div class="user-info">
+                    <div class="user-dp">
+                        <div class="dp"></div>
+                        <div class="button-container">
+                            <button id="editProfile">Edit Profile</button>
                         </div>
-                    </form>
-                </div>
+                    </div>
 
+                    <div class="username"><%= userData.username %></div>
+
+                    <div class="bio">
+                        <% if(userData.bio) userData.bio %>
+                    </div>
+
+                    <div class="user-other-info">
+                        <div id="user-website"></div>
+                        <div class="user-stats">
+                            <div class="followCount">
+                                <span id="followingCounter">0</span>
+                                <span>Following</span>
+                            </div>
+                            <div class="followCount">
+                                <span id="followerCounter">0</span>
+                                <span>Followers</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="posts-container">
-                    <% if(typeof data != 'undefined') { %> <% data.forEach(post => { %>
+                    <% if(typeof postsData != 'undefined') { %> <% postsData.forEach(post => { %>
 
                     <div class="post">
                         <div class="dp">
@@ -85,7 +98,7 @@
                         <div class="post-content-container">
                             <div class="post-header">
                                 <div class="username">
-                                    @<%= post.username %>
+                                    <%= post.username %>
                                 </div>
                                 <div class="post-date">
                                     <%= post.date %>
@@ -107,6 +120,7 @@
 
                 </div>
             </section>
+
             <section id="misc">
                 <div class="search-bar-container">
                     <div class="search-icon"></div>
@@ -118,7 +132,6 @@
             </section>
             </div>
         </main>
-
     </body>
 
 </html>
