@@ -62,16 +62,23 @@
 }
 #profile-section .user-info .user-dp .button-container button {
   padding: 0.5rem 1rem 0.5rem 1rem;
-  background: none;
   outline: 0;
-  border: 2px solid var(--border-color);
   border-radius: 1rem;
-  color: white;
   font-weight: 600;
   cursor: pointer;
 }
 #profile-section .user-info .user-dp .button-container button:hover {
   border: 2px solid #bebebe;
+}
+#profile-section .user-info .user-dp .button-container #editProfileBtn {
+  background: none;
+  border: 2px solid var(--border-color);
+  color: white;
+}
+#profile-section .user-info .user-dp .button-container #followBtn {
+  background: white;
+  border: 0;
+  color: black;
 }
 #profile-section .user-stats {
   display: flex;

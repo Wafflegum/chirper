@@ -56,8 +56,6 @@ app.get('/', async (req, res) => {
 
 		const postsData = unsortedData.sort()
 
-		console.log(req.user.username)
-
 		res.render('home', { userData: req.user.username, data: postsData })
 	} else {
 		res.redirect('login')
@@ -200,7 +198,14 @@ app.get('/:username', async (req, res) => {
 			}
 		})
 
-		res.render('profile', { userData: userData.rows[0], postsData: postsData })
+		let isOwnProfile = false
+
+		if (userData.rows[0].username === req.user.username) {
+			isOwnProfile = true
+		} else {
+			isOwnProfile = false
+		}
+		res.render('profile', { userData: userData.rows[0], postsData: postsData, isOwnProfile: isOwnProfile })
 	} else {
 		res.send('No users found')
 	}
