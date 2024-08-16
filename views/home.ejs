@@ -6,7 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Document</title>
         <link rel="stylesheet" href="css/global.css">
-        <script defer type="text/javascript" src="/app.js"></script>
+        <link rel="stylesheet" href="css/home.css">
+        <script defer type="text/javascript" src="/homepage.js"></script>
     </head>
 
     <body>
@@ -62,12 +63,16 @@
         <main>
             <section id="post-section">
                 <div class="content-category-container">
-                    <div class="content-category" id="forYou">
-                        For you
-                    </div>
-                    <div class="content-category" id="following">
-                        Following
-                    </div>
+                    <form action="/display-for-you" method="POST" id="displayForYou">
+                        <button class="content-category" id="forYou">
+                            For you
+                        </button>
+                    </form>
+                    <form action="/display-following" method="POST" id="displayFollowing">
+                        <button class="content-category" id="following">
+                            Following
+                        </button>
+                    </form>
                 </div>
 
                 <div class="create-post-container">
@@ -93,7 +98,7 @@
                         <div class="post-content-container">
                             <div class="post-header">
                                 <a class="username" href="/<%= post.username %>">
-                                    @<%= post.username %>
+                                    <%= post.username %>
                                 </a>
                                 <div class="post-date">
                                     <%= post.date %>

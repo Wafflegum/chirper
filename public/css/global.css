@@ -10,6 +10,7 @@
   --primary-color: #ff3662;
   --font-title: 1.1rem;
   --font-content: 0.85rem;
+  --button-highlight: rgba(92, 92, 92, 0.2);
   --dark-secondary-text-color: rgba(255, 255, 255, 0.40);
 }
 
@@ -115,21 +116,6 @@ navbar .span-container {
   min-height: 100%;
   height: fit-content;
   font-size: var(--font-title);
-}
-#post-section .content-category-container {
-  display: flex;
-  justify-content: center;
-  border-bottom: 1px solid var(--border-color);
-}
-#post-section .content-category {
-  flex: 1 1 auto;
-  width: 100%;
-  height: 3rem;
-  padding: 1rem;
-  box-sizing: border-box;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .create-post-container {

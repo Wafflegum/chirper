@@ -4,9 +4,12 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Profile</title>
         <link rel="stylesheet" href="/css/global.css">
         <link rel="stylesheet" href="/css/profile.css">
-        <title>Profile</title>
+        <script defer type="text/javascript" src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+        <script defer type="text/javascript" src="/profile.js"></script>
     </head>
 
     <body>
@@ -76,9 +79,9 @@
                         <div class="dp"></div>
                         <div class="button-container">
                             <% if (isOwnProfile) { %>
-                                <button id="editProfileBtn">Edit Profile</button>
+                                <button id="editProfileBtn" >Edit Profile</button>
                             <%  } else {  %> 
-                                <button id="followBtn">Follow</button>
+                                <button id="followBtn" data-userid="<%= userData.id %>"> <%= isFollowing %></button>
                             <% } %>
                             
                         </div>
