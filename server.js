@@ -186,9 +186,11 @@ app.get('/dev/user', (req, res) => {
 app.get('/:username', async (req, res) => {
 	const username = req.params.username
 
+	// finds the user from database
 	const userData = await pool.query('SELECT * FROM users WHERE username = $1', [username])
 
 	if (userData.rows.length > 0) {
+		// if user exists, fetches all the posts from that user
 		const rawPostsData = await pool.query('SELECT * FROM posts WHERE user_id = $1', [userData.rows[0].id])
 
 		const postsData = rawPostsData.rows.map((post) => {
@@ -240,14 +242,17 @@ app.post('/follow', async (req, res) => {
 		const toFollowID = req.body.user_id
 		const follower = req.user.id
 
+		// checks if user exists
 		await pool.query('SELECT * FROM users WHERE id = $1', [toFollowID], (err, user) => {
 			if (user.rows.length > 0) {
+				// if it's true, it checks if the user is already following
 				pool.query(
 					'SELECT * FROM followers WHERE follower_id = $1 AND followed_id = $2',
 					[follower, toFollowID],
 					(err, result) => {
 						if (err) throw err
 
+						// if following, unfollow user
 						if (result.rows.length > 0) {
 							pool.query(
 								'DELETE FROM followers WHERE follower_id = $1 AND followed_id = $2',
@@ -259,6 +264,7 @@ app.post('/follow', async (req, res) => {
 								}
 							)
 						} else {
+							// if not, follow user
 							pool.query(
 								'INSERT INTO followers (follower_id, followed_id) VALUES ($1, $2)',
 								[follower, toFollowID],
@@ -355,6 +361,15 @@ app.post('/display-following', async (req, res) => {
 app.post('/display-for-you', (req, res) => {
 	res.redirect('/')
 })
+
+app.post('/logout', (req, res, next) => {
+	req.logout((err) => {
+		if (err) return next(err)
+
+		res.redirect('/')
+	})
+})
+
 app.listen(PORT, (err, res) => {
 	console.log('Now listening on port ' + PORT)
 	console.log(`http://localhost:4000/ <= Click here!`)
