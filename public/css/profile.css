@@ -67,15 +67,15 @@
   font-weight: 600;
   cursor: pointer;
 }
-#profile-section .user-info .user-dp .button-container #editProfileBtn {
+#profile-section .user-info .user-dp .button-container .button-normal {
   background: none;
   border: 2px solid var(--border-color);
   color: white;
 }
-#profile-section .user-info .user-dp .button-container #editProfileBtn:hover {
+#profile-section .user-info .user-dp .button-container .button-normal:hover {
   border: 2px solid #bebebe;
 }
-#profile-section .user-info .user-dp .button-container #followBtn {
+#profile-section .user-info .user-dp .button-container .button-highlight {
   background: white;
   border: 0;
   color: black;

@@ -70,18 +70,18 @@
                     <button id="backBtn"><img src="/images/back.svg" alt=""></button>
                     <div class="header-info">
                         <div class="username"><%= userData.username %></div>
-                        <div class="postCount">0 posts</div>
+                        <div class="postCount"> <%= postCount %> posts</div>
                     </div>
                 </header>
 
                 <div class="user-info">
                     <div class="user-dp">
                         <div class="dp"></div>
-                        <div class="button-container">
+                        <div class="button-container" id="profileButtonContainer">
                             <% if (isOwnProfile) { %>
-                                <button id="editProfileBtn" >Edit Profile</button>
+                                <button class="button-normal" id="editProfileBtn" >Edit Profile</button>
                             <%  } else {  %> 
-                                <button id="followBtn" data-userid="<%= userData.id %>"> <%= isFollowing %></button>
+                                <button class="button-highlight" id="followBtn" data-userid="<%= userData.id %>"> <%= isFollowing %></button>
                             <% } %>
                             
                         </div>
@@ -89,19 +89,23 @@
 
                     <div class="username"><%= userData.username %></div>
 
-                    <div class="bio">
-                        <% if(userData.bio) userData.bio %>
+                    <div id="bio">
+                        <% if(bio) bio %>
                     </div>
 
                     <div class="user-other-info">
                         <div id="user-website"></div>
                         <div class="user-stats">
                             <div class="followCount">
-                                <span id="followingCounter">0</span>
+                                <span id="followingCounter">
+                                    <%= followingCount %>
+                                </span>
                                 <span>Following</span>
                             </div>
                             <div class="followCount">
-                                <span id="followerCounter">0</span>
+                                <span id="followerCounter">
+                                    <%= followerCount %>
+                                </span>
                                 <span>Followers</span>
                             </div>
                         </div>

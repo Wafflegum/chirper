@@ -186,7 +186,7 @@ app.get('/dev/user', (req, res) => {
 app.get('/:username', async (req, res) => {
 	const username = req.params.username
 
-	// finds the user from database
+	// Fetches the user you're viewing from database
 	const userData = await pool.query('SELECT * FROM users WHERE username = $1', [username])
 
 	if (userData.rows.length > 0) {
@@ -201,6 +201,11 @@ app.get('/:username', async (req, res) => {
 			}
 		})
 
+		const followingData = await pool.query('SELECT * FROM followers WHERE follower_id = $1', [userData.rows[0].id]) // Fetches the following data of the user you're viewing
+		const followerData = await pool.query('SELECT * FROM followers WHERE followed_id = $1', [userData.rows[0].id]) // Fetches the follower data of the user you're viewing
+
+		const bioData = await pool.query('SELECT * FROM bio WHERE user_id = $1', [userData.rows[0].id])
+
 		let isOwnProfile = false
 		let isFollowing = false
 
@@ -210,13 +215,14 @@ app.get('/:username', async (req, res) => {
 			} else {
 				isOwnProfile = false
 
-				// this checks if the visitor follows the user
+				// This checks if the visitor follows the user
 				if (!isOwnProfile) {
 					const viewingUser = await pool.query(
 						'SELECT * FROM followers WHERE follower_id = $1 AND followed_id = $2',
 						[req.user.id, userData.rows[0].id]
 					)
 
+					// Changes the button's text accordingly if the user follows or not
 					if (viewingUser.rows.length > 0) {
 						isFollowing = 'Following'
 					} else {
@@ -229,8 +235,12 @@ app.get('/:username', async (req, res) => {
 		res.render('profile', {
 			userData: userData.rows[0],
 			postsData: postsData,
+			postCount: postsData.length,
 			isOwnProfile: isOwnProfile,
 			isFollowing: isFollowing,
+			followerCount: followerData.rows.length,
+			followingCount: followingData.rows.length,
+			bio: bioData.text,
 		})
 	} else {
 		res.send('No users found')
