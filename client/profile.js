@@ -55,10 +55,12 @@ if (editProfileBtn != null) {
 		// Backups the current bio, then replaces it with an input field
 		const bioBackup = bio.innerHTML
 
-		const inputField = document.createElement('input')
+		// Create the input then apply all settings
+		const inputField = document.createElement('textarea')
 		inputField.className = 'bioField'
 		inputField.type = 'text'
-		inputField.value = bioBackup // this will put in the current bio to the input field
+		inputField.innerHTML = bio.innerText // this will put in the current bio to the input field
+		inputField.placeholder = 'Enter your bio here...'
 
 		bio.replaceChild(inputField, bio.firstChild)
 
@@ -66,13 +68,17 @@ if (editProfileBtn != null) {
 		cancelBtn.addEventListener('click', (e) => {
 			profileButtonContainer.innerHTML = ''
 			profileButtonContainer.appendChild(editProfileBtn)
-			bio.innerHTML = bioBackup
+			bio.innerText = bioBackup
 		})
 
 		saveBtn.addEventListener('click', (e) => {
-			profileButtonContainer.innerHTML = ''
-			profileButtonContainer.appendChild(editProfileBtn)
-			bio.innerHTML = inputField.value
+			axios.post('/save-profile', { bioContent: inputField.value }).then((response) => {
+				const data = response.data
+
+				profileButtonContainer.innerHTML = ''
+				bio.innerHTML = inputField.value
+				profileButtonContainer.appendChild(editProfileBtn)
+			})
 		})
 	})
 }

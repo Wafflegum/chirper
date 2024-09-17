@@ -163,6 +163,74 @@ app.post(
 	})
 )
 
+app.post('/display-following', async (req, res) => {
+	if (req.isAuthenticated()) {
+		const followingUsers = await pool.query('SELECT * FROM followers WHERE follower_id = $1', [req.user.id])
+		let unsortedPostsData = []
+		// // followingUsers.rows.forEach(async (user) => {
+		// // 	console.log(`Displaying following posts for ${user.followed_id}`)
+		// // 	const posts = await pool.query(
+		// // 		'SELECT * FROM posts WHERE user_id = $1',
+		// // 		[user.followed_id],
+		// // 		async (err, post) => {
+		// // 			if (post.rows.length > 0) {
+		// // 				await Promise.all(
+		// // 					post.rows.map(async (entry) => {
+		// // 						const user = await pool.query('SELECT * FROM users WHERE id = $1', [entry.user_id])
+
+		// // 						unsortedPostsData.push({
+		// // 							username: user.rows[0].userna,
+		// // 							content: entry.content,
+		// // 							date: formatDate(entry.date),
+		// // 						})
+		// // 					})
+		// // 				)
+		// // 				const postsData = unsortedPostsData.sort()
+		// // 				res.render('home', { userData: req.user.username, data: postsData })
+		// // 			}
+		// // 		}
+		// // 	)
+		// // })
+
+		// this
+		const postPromise = followingUsers.rows.map(async (user) => {
+			// this creates an array for promises
+
+			const posts = await pool.query('SELECT * FROM posts WHERE user_id = $1', [user.followed_id])
+
+			if (posts.rows.length > 0) {
+				await Promise.all(
+					// wait for the data to be fetched
+					posts.rows.map(async (entry) => {
+						const user = await pool.query('SELECT * FROM users WHERE id = $1', [entry.user_id])
+						const username = user.rows[0].username
+
+						if (user.rows.length > 0) {
+							unsortedPostsData.push({
+								username: username,
+								content: entry.content,
+								date: formatDate(entry.date),
+							})
+						}
+					})
+				)
+			}
+		})
+
+		await Promise.all(postPromise) // this waits for all posts data to be fetched
+
+		const postsData = unsortedPostsData.sort()
+
+		res.render('home', { userData: req.user.username, data: postsData })
+	} else {
+		res.redirect('/login')
+	}
+})
+
+app.post('/display-for-you', (req, res) => {
+	res.redirect('/')
+})
+
 app.post('/create-post', (req, res) => {
 	let { content } = req.body
 
@@ -240,7 +308,7 @@ app.get('/:username', async (req, res) => {
 			isFollowing: isFollowing,
 			followerCount: followerData.rows.length,
 			followingCount: followingData.rows.length,
-			bio: bioData.text,
+			bio: bioData.rows[0].text,
 		})
 	} else {
 		res.send('No users found')
@@ -304,72 +372,18 @@ app.post('/follow', async (req, res) => {
 	}
 })
 
-app.post('/display-following', async (req, res) => {
-	if (req.isAuthenticated()) {
-		const followingUsers = await pool.query('SELECT * FROM followers WHERE follower_id = $1', [req.user.id])
-		let unsortedPostsData = []
-		// // followingUsers.rows.forEach(async (user) => {
-		// // 	console.log(`Displaying following posts for ${user.followed_id}`)
-		// // 	const posts = await pool.query(
-		// // 		'SELECT * FROM posts WHERE user_id = $1',
-		// // 		[user.followed_id],
-		// // 		async (err, post) => {
-		// // 			if (post.rows.length > 0) {
-		// // 				await Promise.all(
-		// // 					post.rows.map(async (entry) => {
-		// // 						const user = await pool.query('SELECT * FROM users WHERE id = $1', [entry.user_id])
+// Functionalities for Edit Profile / changing bio in profile page
+app.post('/save-profile', async (req, res) => {
+	const userID = req.user.id
+	const userBio = await pool.query('SELECT * FROM bio WHERE user_id = $1', [userID])
 
-		// // 						unsortedPostsData.push({
-		// // 							username: user.rows[0].userna,
-		// // 							content: entry.content,
-		// // 							date: formatDate(entry.date),
-		// // 						})
-		// // 					})
-		// // 				)
-		// // 				const postsData = unsortedPostsData.sort()
-		// // 				res.render('home', { userData: req.user.username, data: postsData })
-		// // 			}
-		// // 		}
-		// // 	)
-		// // })
-
-		// this
-		const postPromise = followingUsers.rows.map(async (user) => {
-			// this creates an array for promises
-
-			const posts = await pool.query('SELECT * FROM posts WHERE user_id = $1', [user.followed_id])
-
-			if (posts.rows.length > 0) {
-				await Promise.all(
-					// wait for the data to be fetched
-					posts.rows.map(async (entry) => {
-						const user = await pool.query('SELECT * FROM users WHERE id = $1', [entry.user_id])
-						const username = user.rows[0].username
-
-						if (user.rows.length > 0) {
-							unsortedPostsData.push({
-								username: username,
-								content: entry.content,
-								date: formatDate(entry.date),
-							})
-						}
-					})
-				)
-			}
-		})
-
-		await Promise.all(postPromise) // this waits for all posts data to be fetched
-
-		const postsData = unsortedPostsData.sort()
-
-		res.render('home', { userData: req.user.username, data: postsData })
+	if (userBio.rows.length > 0) {
+		pool.query('UPDATE bio SET text = $1 WHERE user_id = $2', [req.body.bioContent, userID])
+		return res.status(200).json({ success: true })
 	} else {
-		res.redirect('/login')
+		pool.query('INSERT INTO BIO (user_id, text) VALUES ($1, $2)', [userID, req.body.bioContent])
+		return res.status(200).json({ success: true })
 	}
-})
-
-app.post('/display-for-you', (req, res) => {
-	res.redirect('/')
 })
 
 app.post('/logout', (req, res, next) => {
