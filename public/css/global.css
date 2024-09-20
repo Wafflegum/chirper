@@ -34,6 +34,10 @@ a {
   text-decoration: none;
 }
 
+#postCharCounter {
+  color: #444444;
+}
+
 navbar {
   display: flex;
   justify-content: flex-end;

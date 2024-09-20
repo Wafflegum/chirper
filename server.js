@@ -51,6 +51,7 @@ app.get('/', async (req, res) => {
 					username: user.username,
 					content: entry.content,
 					date: formatDate(entry.date),
+					postID: entry.id,
 				}
 			})
 		)
@@ -210,6 +211,7 @@ app.post('/display-following', async (req, res) => {
 								username: username,
 								content: entry.content,
 								date: formatDate(entry.date),
+								postID: entry.id,
 							})
 						}
 					})
@@ -244,6 +246,26 @@ app.post('/create-post', (req, res) => {
 	}
 })
 
+app.post('/like-post', async (req, res) => {
+	if (req.isAuthenticated()) {
+		const postID = req.body.postID
+
+		const likedPost = await pool.query('SELECT * FROM likes where post_id = $1 AND liker_id = $2', [
+			postID,
+			req.user.id,
+		])
+		if (likedPost.rows.length > 0) {
+			await pool.query('DELETE FROM likes where post_id = $1 AND liker_id = $2', [postID, req.user.id])
+			res.status(200).json({ success: true })
+		} else {
+			await pool.query('INSERT INTO likes (post_id, liker_id) VALUES ($1, $2)', [postID, req.user.id])
+			res.status(200).json({ success: true })
+		}
+	} else {
+		res.redirect('/login')
+	}
+})
+
 app.get('/dev/user', (req, res) => {
 	if (req.isAuthenticated()) {
 		let user = req.user
@@ -266,6 +288,7 @@ app.get('/:username', async (req, res) => {
 				username: userData.rows[0].username,
 				content: post.content,
 				date: formatDate(rawPostsData.date),
+				postID: post.id,
 			}
 		})
 
@@ -308,7 +331,7 @@ app.get('/:username', async (req, res) => {
 			isFollowing: isFollowing,
 			followerCount: followerData.rows.length,
 			followingCount: followingData.rows.length,
-			bio: bioData.rows[0].text,
+			bio: bioData.rows[0] ? bioData.rows[0].text : '',
 		})
 	} else {
 		res.send('No users found')

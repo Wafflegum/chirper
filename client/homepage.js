@@ -39,7 +39,7 @@ createPostInput.addEventListener('input', (e) => {
 	} else if (postCharCount >= characterLimit * 0.8) {
 		postCharCounter.style.color = 'orange'
 	} else {
-		postCharCounter.style.color = 'white'
+		postCharCounter.style.color = '#444444'
 	}
 
 	if (postCharCount <= 0) {

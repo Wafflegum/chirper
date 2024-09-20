@@ -61,6 +61,7 @@ if (editProfileBtn != null) {
 		inputField.type = 'text'
 		inputField.innerHTML = bio.innerText // this will put in the current bio to the input field
 		inputField.placeholder = 'Enter your bio here...'
+		inputField.setAttribute('MaxLength', '160')
 
 		bio.replaceChild(inputField, bio.firstChild)
 

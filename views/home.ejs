@@ -7,7 +7,12 @@
         <title>Document</title>
         <link rel="stylesheet" href="css/global.css">
         <link rel="stylesheet" href="css/home.css">
+
+        <script defer type="text/javascript" src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
         <script defer type="text/javascript" src="/homepage.js"></script>
+        <script defer type="text/javascript" src="/like-post.js"></script>
     </head>
 
     <body>
@@ -89,7 +94,7 @@
                         <img src="/dev/dp.png" alt="">
                     </div>
                     <form action="/create-post" method="POST" id="createPostForm">
-                        <textarea name="content" id="createPost" placeholder="What' s happening?"></textarea>
+                        <textarea name="content" id="createPost" placeholder="What's happening?"></textarea>
                         <div id="buttons">
                             <div class="character-counter" id="postCharCounter">0</div>
                             <button type="submit" id="postBtn">Post</button>
@@ -120,7 +125,7 @@
                             <div class="post-body"><%- post.content.trim().replace(/\n/g, '<br>') %></div>
 
                             <div class="post-footer">
-                                <button id="heartBtn"><img src="/images/heart.png"></button>
+                                <button class="like-btn" data-postID="<%= post.postID %>"><img src="/images/heart.png"></button>
                             </div>
                         </div>
                     </div>
