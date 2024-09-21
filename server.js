@@ -47,11 +47,25 @@ app.get('/', async (req, res) => {
 
 				const user = userResult.rows[0]
 
+				let isLiked
+
+				const likedPost = await pool.query('SELECT * FROM likes WHERE post_id = $1 AND liker_id = $2', [
+					entry.id,
+					req.user.id,
+				])
+
+				if (likedPost.rows.length > 0) {
+					isLiked = true
+				} else {
+					isLiked = false
+				}
+
 				return {
 					username: user.username,
 					content: entry.content,
 					date: formatDate(entry.date),
 					postID: entry.id,
+					isLiked: isLiked,
 				}
 			})
 		)
@@ -206,12 +220,26 @@ app.post('/display-following', async (req, res) => {
 						const user = await pool.query('SELECT * FROM users WHERE id = $1', [entry.user_id])
 						const username = user.rows[0].username
 
+						let isLiked
+
+						const likedPost = await pool.query('SELECT * FROM likes WHERE post_id = $1 AND liker_id = $2', [
+							entry.id,
+							req.user.id,
+						])
+
+						if (likedPost.rows.length > 0) {
+							isLiked = true
+						} else {
+							isLiked = false
+						}
+
 						if (user.rows.length > 0) {
 							unsortedPostsData.push({
 								username: username,
 								content: entry.content,
 								date: formatDate(entry.date),
 								postID: entry.id,
+								isLiked: isLiked,
 							})
 						}
 					})
@@ -256,10 +284,10 @@ app.post('/like-post', async (req, res) => {
 		])
 		if (likedPost.rows.length > 0) {
 			await pool.query('DELETE FROM likes where post_id = $1 AND liker_id = $2', [postID, req.user.id])
-			res.status(200).json({ success: true })
+			res.status(200).json({ success: true, isLiked: false })
 		} else {
 			await pool.query('INSERT INTO likes (post_id, liker_id) VALUES ($1, $2)', [postID, req.user.id])
-			res.status(200).json({ success: true })
+			res.status(200).json({ success: true, isLiked: true })
 		}
 	} else {
 		res.redirect('/login')
@@ -283,14 +311,30 @@ app.get('/:username', async (req, res) => {
 		// if user exists, fetches all the posts from that user
 		const rawPostsData = await pool.query('SELECT * FROM posts WHERE user_id = $1', [userData.rows[0].id])
 
-		const postsData = rawPostsData.rows.map((post) => {
-			return {
-				username: userData.rows[0].username,
-				content: post.content,
-				date: formatDate(rawPostsData.date),
-				postID: post.id,
-			}
-		})
+		const postsData = await Promise.all(
+			rawPostsData.rows.map(async (post) => {
+				const likedPost = await pool.query('SELECT * FROM likes WHERE post_id = $1 AND liker_id = $2', [
+					post.id,
+					req.user.id,
+				])
+
+				let isLiked
+
+				if (likedPost.rows.length > 0) {
+					isLiked = true
+				} else {
+					isLiked = false
+				}
+
+				return {
+					username: userData.rows[0].username,
+					content: post.content,
+					date: formatDate(rawPostsData.date),
+					postID: post.id,
+					isLiked: isLiked,
+				}
+			})
+		)
 
 		const followingData = await pool.query('SELECT * FROM followers WHERE follower_id = $1', [userData.rows[0].id]) // Fetches the following data of the user you're viewing
 		const followerData = await pool.query('SELECT * FROM followers WHERE followed_id = $1', [userData.rows[0].id]) // Fetches the follower data of the user you're viewing

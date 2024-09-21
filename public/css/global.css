@@ -278,8 +278,29 @@ form textarea {
   outline: 0;
   border: 0;
   text-align: center;
+  transition: transform 0.3s ease;
 }
-.post-footer img {
+.post-footer .click-animation {
+  animation: pulse 0.4s ease;
+}
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  20% {
+    transform: scale(1.05);
+  }
+  50% {
+    transform: scale(0.9);
+  }
+  80% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.post-footer svg {
   height: 100%;
   object-fit: contain;
 }

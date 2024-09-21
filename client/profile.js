@@ -63,7 +63,11 @@ if (editProfileBtn != null) {
 		inputField.placeholder = 'Enter your bio here...'
 		inputField.setAttribute('MaxLength', '160')
 
-		bio.replaceChild(inputField, bio.firstChild)
+		if (bio.innerHTML !== null) {
+			bio.replaceChildren(inputField)
+		} else {
+			bio.appendChild(inputField)
+		}
 
 		// When you click the cancel button, it basically resets
 		cancelBtn.addEventListener('click', (e) => {
