@@ -269,6 +269,13 @@ form textarea {
 .post-footer {
   margin-top: 0.25rem;
   display: flex;
+  font-size: 0.65rem;
+}
+.post-footer .like-container {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--dark-secondary-text-color);
 }
 .post-footer button {
   height: 1rem;

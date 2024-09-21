@@ -12,6 +12,8 @@ initializePassport(passport)
 
 require('dotenv')
 
+const fetchPosts = require('./fetchPosts')
+
 const PORT = process.env.PORT || 4000
 
 app.set('view engine', 'ejs')
@@ -39,40 +41,42 @@ app.use(flash())
 
 app.get('/', async (req, res) => {
 	if (req.isAuthenticated()) {
-		const results = await pool.query('SELECT * FROM posts')
+		const postsData = await pool.query('SELECT * FROM posts')
 
-		const unsortedData = await Promise.all(
-			results.rows.map(async (entry) => {
-				const userResult = await pool.query('SELECT * FROM users WHERE id = $1', [entry.user_id])
+		// const unsortedData = await Promise.all(
+		// 	postsData.rows.map(async (entry) => {
+		// 		const userResult = await pool.query('SELECT * FROM users WHERE id = $1', [entry.user_id])
 
-				const user = userResult.rows[0]
+		// 		const user = userResult.rows[0]
 
-				let isLiked
+		// 		let isLiked
 
-				const likedPost = await pool.query('SELECT * FROM likes WHERE post_id = $1 AND liker_id = $2', [
-					entry.id,
-					req.user.id,
-				])
+		// 		const likedPost = await pool.query('SELECT * FROM likes WHERE post_id = $1 AND liker_id = $2', [
+		// 			entry.id,
+		// 			req.user.id,
+		// 		])
 
-				if (likedPost.rows.length > 0) {
-					isLiked = true
-				} else {
-					isLiked = false
-				}
+		// 		if (likedPost.rows.length > 0) {
+		// 			isLiked = true
+		// 		} else {
+		// 			isLiked = false
+		// 		}
 
-				return {
-					username: user.username,
-					content: entry.content,
-					date: formatDate(entry.date),
-					postID: entry.id,
-					isLiked: isLiked,
-				}
-			})
-		)
+		// 		return {
+		// 			username: user.username,
+		// 			content: entry.content,
+		// 			date: formatDate(entry.date),
+		// 			postID: entry.id,
+		// 			isLiked: isLiked,
+		// 		}
+		// 	})
+		// )
 
-		const postsData = unsortedData.sort()
+		// const postsData = unsortedData.sort()
 
-		res.render('home', { userData: req.user.username, data: postsData })
+		const posts = await fetchPosts({ userID: req.user.id, postsData: postsData })
+
+		res.render('home', { userData: req.user.username, data: posts })
 	} else {
 		res.redirect('login')
 	}
@@ -85,25 +89,6 @@ app.get('/register', (req, res) => {
 		res.redirect('/')
 	}
 })
-
-// Formats the date to YYYY-MM-DD as per PSQL's date format.
-function formatDate(date) {
-	let d
-	if (date === null || date === undefined) {
-		d = new Date()
-	} else {
-		d = new Date(date)
-	}
-
-	let month = '' + (d.getMonth() + 1),
-		day = '' + d.getDate(),
-		year = d.getFullYear()
-
-	if (month.length < 2) month = '0' + month
-	if (day.length < 2) day = '0' + day
-
-	return [year, month, day].join('-')
-}
 
 // manages the register functionality.
 app.post('/register', async (req, res) => {
@@ -181,77 +166,18 @@ app.post(
 app.post('/display-following', async (req, res) => {
 	if (req.isAuthenticated()) {
 		const followingUsers = await pool.query('SELECT * FROM followers WHERE follower_id = $1', [req.user.id])
-		let unsortedPostsData = []
-		// // followingUsers.rows.forEach(async (user) => {
-		// // 	console.log(`Displaying following posts for ${user.followed_id}`)
-		// // 	const posts = await pool.query(
-		// // 		'SELECT * FROM posts WHERE user_id = $1',
-		// // 		[user.followed_id],
-		// // 		async (err, post) => {
-		// // 			if (post.rows.length > 0) {
-		// // 				await Promise.all(
-		// // 					post.rows.map(async (entry) => {
-		// // 						const user = await pool.query('SELECT * FROM users WHERE id = $1', [entry.user_id])
+		let posts = []
 
-		// // 						unsortedPostsData.push({
-		// // 							username: user.rows[0].userna,
-		// // 							content: entry.content,
-		// // 							date: formatDate(entry.date),
-		// // 						})
-		// // 					})
-		// // 				)
-		// // 				const postsData = unsortedPostsData.sort()
-		// // 				res.render('home', { userData: req.user.username, data: postsData })
-		// // 			}
-		// // 		}
-		// // 	)
-		// // })
+		const postPromise = await Promise.all(
+			followingUsers.rows.map(async (user) => {
+				// fetches the post datas from the followed users
+				const postsData = await pool.query('SELECT * FROM posts WHERE user_id = $1', [user.followed_id])
 
-		// this
-		const postPromise = followingUsers.rows.map(async (user) => {
-			// this creates an array for promises
+				posts = await fetchPosts({ userID: req.user.id, postsData: postsData })
+			})
+		)
 
-			const posts = await pool.query('SELECT * FROM posts WHERE user_id = $1', [user.followed_id])
-
-			if (posts.rows.length > 0) {
-				await Promise.all(
-					// wait for the data to be fetched
-					posts.rows.map(async (entry) => {
-						const user = await pool.query('SELECT * FROM users WHERE id = $1', [entry.user_id])
-						const username = user.rows[0].username
-
-						let isLiked
-
-						const likedPost = await pool.query('SELECT * FROM likes WHERE post_id = $1 AND liker_id = $2', [
-							entry.id,
-							req.user.id,
-						])
-
-						if (likedPost.rows.length > 0) {
-							isLiked = true
-						} else {
-							isLiked = false
-						}
-
-						if (user.rows.length > 0) {
-							unsortedPostsData.push({
-								username: username,
-								content: entry.content,
-								date: formatDate(entry.date),
-								postID: entry.id,
-								isLiked: isLiked,
-							})
-						}
-					})
-				)
-			}
-		})
-
-		await Promise.all(postPromise) // this waits for all posts data to be fetched
-
-		const postsData = unsortedPostsData.sort()
-
-		res.render('home', { userData: req.user.username, data: postsData })
+		res.render('home', { userData: req.user.username, data: posts })
 	} else {
 		res.redirect('/login')
 	}
@@ -309,32 +235,9 @@ app.get('/:username', async (req, res) => {
 
 	if (userData.rows.length > 0) {
 		// if user exists, fetches all the posts from that user
-		const rawPostsData = await pool.query('SELECT * FROM posts WHERE user_id = $1', [userData.rows[0].id])
+		const unsortedData = await pool.query('SELECT * FROM posts WHERE user_id = $1', [userData.rows[0].id])
 
-		const postsData = await Promise.all(
-			rawPostsData.rows.map(async (post) => {
-				const likedPost = await pool.query('SELECT * FROM likes WHERE post_id = $1 AND liker_id = $2', [
-					post.id,
-					req.user.id,
-				])
-
-				let isLiked
-
-				if (likedPost.rows.length > 0) {
-					isLiked = true
-				} else {
-					isLiked = false
-				}
-
-				return {
-					username: userData.rows[0].username,
-					content: post.content,
-					date: formatDate(rawPostsData.date),
-					postID: post.id,
-					isLiked: isLiked,
-				}
-			})
-		)
+		const postsData = await fetchPosts({ userID: req.user.id, postsData: unsortedData })
 
 		const followingData = await pool.query('SELECT * FROM followers WHERE follower_id = $1', [userData.rows[0].id]) // Fetches the following data of the user you're viewing
 		const followerData = await pool.query('SELECT * FROM followers WHERE followed_id = $1', [userData.rows[0].id]) // Fetches the follower data of the user you're viewing
