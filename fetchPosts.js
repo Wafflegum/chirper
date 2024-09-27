@@ -19,7 +19,7 @@ function formatDate(date) {
 	return [year, month, day].join('-')
 }
 
-async function FetchPosts({ userID, postsData, includeLikes = true } = {}) {
+async function FetchPosts({ userID: userId, postsData, includeLikes = true } = {}) {
 	const unsortedData = await Promise.all(
 		postsData.rows.map(async (entry) => {
 			const userData = await pool.query('SELECT * FROM users WHERE id = $1', [entry.user_id])
@@ -32,7 +32,7 @@ async function FetchPosts({ userID, postsData, includeLikes = true } = {}) {
 			if (includeLikes) {
 				const likeData = await pool.query('SELECT * FROM likes WHERE post_id = $1 AND liker_id = $2', [
 					entry.id,
-					userID,
+					userId,
 				])
 
 				liked = likeData.rows.length > 0
