@@ -4,15 +4,10 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
-        <link rel="stylesheet" href="css/global.css">
-        <link rel="stylesheet" href="css/home.css">
+        <title>Notifications | Chirper</title>
 
-        <script defer type="text/javascript" src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-
-        <script defer type="text/javascript" src="/homepage.js"></script>
-        <script defer type="text/javascript" src="/like-post.js"></script>
+        <link rel="stylesheet" href="/css/global.css">
+        <link rel="stylesheet" href="/css/notifications.css">
     </head>
 
     <body>
@@ -75,77 +70,24 @@
         </navbar>
 
         <main>
-            <section id="post-section">
-                <div class="content-category-container">
-                    <form action="/display-for-you" method="POST" id="displayForYou">
-                        <button class="content-category" id="forYou">
-                            For you
-                        </button>
-                    </form>
-                    <form action="/display-following" method="POST" id="displayFollowing">
-                        <button class="content-category" id="following">
-                            Following
-                        </button>
-                    </form>
-                </div>
+            <section class="main-section">
+                <header>
+                    <h3>Notifications</h3>
+                </header>
 
-                <div class="create-post-container">
-                    <div class="dp">
-                        <img src="/dev/dp.png" alt="">
-                    </div>
-                    <form action="/create-post" method="POST" id="createPostForm">
-                        <textarea name="content" id="createPost" placeholder="What's happening?"></textarea>
-                        <div id="buttons">
-                            <div class="character-counter" id="postCharCounter">0</div>
-                            <button type="submit" id="postBtn">Post</button>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="posts-container">
-                    <% if(typeof data != 'undefined') { %> <% data.forEach(post => { %>
-
-                    <div class="post">
-                        <a class="dp" href="/<%= post.username %>">
-                            <img src="/dev/dp.png">
-                        </a>
-                        <div class="post-content-container">
-                            <div class="post-header">
-                                <a class="username" href="/<%= post.username %>">
-                                    <%= post.username %>
-                                </a>
-                                <div class="post-date">
-                                    <%= post.date %>
-                                </div>
-                                <button id="postSettingsBtn">
-                                    <img src="/images/3dots.png">
-                                </button>
-                            </div>
-
-                            <div class="post-body"><%- post.content.trim().replace(/\n/g, '<br>') %></div>
-
-                            <div class="post-footer">
-                                <div class="like-container">
-                                    <button class="like-btn" data-postID="<%= post.postID %>">
-                                        <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <g id="SVGRepo_bgCarrier" stroke-width="0" />
-                                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
-                                            <g id="SVGRepo_iconCarrier">
-                                                <path d="M2 9.1371C2 14 6.01943 16.5914 8.96173 18.9109C10 19.7294 11 20.5 12 20.5C13 20.5 14 19.7294 15.0383 18.9109C17.9806 16.5914 22 14 22 9.1371C22 4.27416 16.4998 0.825464 12 5.50063C7.50016 0.825464 2 4.27416 2 9.1371Z" fill="<%= post.isLiked ? 'var(--primary-color)' : 'var(--border-color)' %>" />
-                                        </svg>
-                                    </button>
-                                    <div class="likeCounter"> <%= post.likeCount %> </div>
-                                </div>
-
-
-                            </div>
-                        </div>
+                <div class="notif-container">
+                    <% if (typeof notifData != 'undefined') { %> <% notifData.forEach(notif => { %>
+                    <div class="notif-card">
+                        <div class="notif-username"><%= notif.username %></div>
+                        <div class="notif-content"><%= notif.content %></div>
                     </div>
                     <% }) %>
                     <% } %>
 
+
                 </div>
             </section>
+
             <section id="misc">
                 <span class="span-container">
                     <div class="search-bar-container">
@@ -157,9 +99,7 @@
                     </div>
                 </span>
             </section>
-            </div>
         </main>
-
     </body>
 
 </html>

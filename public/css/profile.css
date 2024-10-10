@@ -13,12 +13,6 @@
   object-fit: cover;
 }
 
-#profile-section header {
-  display: flex;
-  flex-direction: row;
-  gap: 2rem;
-  padding: 0.5rem;
-}
 #profile-section header #backBtn {
   flex: 1 1 5%;
   padding: 0;

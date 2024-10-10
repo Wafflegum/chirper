@@ -1,6 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
 *
     font-family: 'Inter', sans-serif
+    padding: 0
+    margin: 0
+
 :root
     --border-color: #303030
     --background-color: #000000
@@ -274,7 +277,8 @@ form
         border: 0
 
         text-align: center
-        transition: transform 0.3s ease
+        transition: transform 0.2s ease
+        cursor: pointer
 
     .click-animation
         animation: pulse 0.4s ease
@@ -353,3 +357,18 @@ form
         li
             cursor: pointer
             min-width: 100%
+
+header
+    display: flex
+    flex-direction: row
+    gap: 2rem
+
+    padding: .5rem
+
+    .header-info
+        flex: 1 1 95%
+
+        .postCount
+            font-size: 0.7rem
+            font-weight: 300
+            color: var(--dark-secondary-text-color)

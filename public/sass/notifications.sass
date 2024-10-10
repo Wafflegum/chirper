@@ -1,0 +1,27 @@
+header
+    padding: 1rem
+    border-bottom: 1px solid var(--border-color)
+
+.notif-container
+    display: flex
+    flex-direction: column
+
+    .notif-card
+        padding: 1rem 2rem
+
+        display: flex
+        flex-direction: column
+        gap: .25rem
+
+        border-bottom: 1px solid var(--border-color)
+        cursor: pointer
+
+        &:hover
+            background: var(--button-highlight)
+
+        .notif-username
+            font-size: var(--font-content)
+            font-weight: 600
+        .notif-content
+            font-size: var(--font-content)
+            opacity: 0.8

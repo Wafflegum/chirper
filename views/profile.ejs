@@ -10,7 +10,7 @@
         <script defer type="text/javascript" src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
         <script defer type="text/javascript" src="/profile.js"></script>
-        <script defer type='text/javascript' src="like-post.js"></script>
+        <script defer type='text/javascript' src="/like-post.js"></script>
     </head>
 
     <body>
@@ -37,11 +37,11 @@
                         <div class="nav-icon"></div>
                         <div class="nav-text">Explore</div>
                     </div>
-                    <div class="nav highlight-onhover" id="notifNav">
+                    <a class="nav highlight-onhover" id="notifNav" href="/notifications">
                         <div class="nav-icon"></div>
                         <div class="nav-text">Notifications</div>
-                    </div>
-                    <a class="nav highlight-onhover" id="profileNav" href='/<%= userData.username %>''>
+                    </a>
+                    <a class="nav highlight-onhover" id="profileNav" href='/profile/<%= userData.username %>''>
                         <div class="nav-icon"></div>
                         <div class="nav-text">Profile</div>
                     </a>

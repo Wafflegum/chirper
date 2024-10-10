@@ -13,6 +13,7 @@ initializePassport(passport)
 require('dotenv')
 
 const fetchPosts = require('./fetchPosts')
+const notify = require('./notify')
 
 const PORT = process.env.PORT || 4000
 
@@ -21,7 +22,9 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
 const path = require('path')
-app.set('views', path.join(__dirname, 'views'))
+const Notify = require('./notify')
+const { type } = require('os')
+app.set('views', path.join(__dirname, '/views'))
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.static(path.join(__dirname, 'assets')))
 app.use(express.static(path.join(__dirname, 'client')))
@@ -210,9 +213,23 @@ app.post('/like-post', async (req, res) => {
 		])
 		if (likedPost.rows.length > 0) {
 			await pool.query('DELETE FROM likes where post_id = $1 AND liker_id = $2', [postID, req.user.id])
+			notify.DeleteNotification(parseInt(req.user.id), parseInt(postID), 'like')
+
 			res.status(200).json({ success: true, isLiked: false })
 		} else {
 			await pool.query('INSERT INTO likes (post_id, liker_id) VALUES ($1, $2)', [postID, req.user.id])
+
+			const recipient_id = await pool.query('SELECT * FROM posts WHERE id = $1', [postID])
+
+			if (recipient_id.rows.length > 0) {
+				notify.Notify({
+					sender_id: req.user.id,
+					recipient_id: recipient_id.rows[0].user_id,
+					post_id: postID,
+					type: 'like',
+				})
+			}
+
 			res.status(200).json({ success: true, isLiked: true })
 		}
 	} else {
@@ -227,7 +244,7 @@ app.get('/dev/user', (req, res) => {
 	}
 })
 
-app.get('/:username', async (req, res) => {
+app.get('/profile/:username', async (req, res) => {
 	const username = req.params.username
 
 	// Fetches the user you're viewing from database
@@ -339,6 +356,33 @@ app.post('/follow', async (req, res) => {
 	} else {
 		res.status(400).json({ success: false, message: 'User not authenticated' })
 		res.redirect('/login')
+	}
+})
+
+app.get('/notifications', async (req, res) => {
+	if (req.isAuthenticated()) {
+		const notifications = await pool.query('SELECT * FROM notifications WHERE recipient_id = $1', [req.user.id])
+
+		const notifData = await Promise.all(
+			notifications.rows.map(async (notif) => {
+				const user = await pool.query('SELECT * FROM users WHERE id = $1', [notif.sender_id])
+
+				let content = ''
+
+				if (notif.type === 'like') {
+					content = 'liked your post'
+				} else if (notif.type === 'follow') {
+					content = 'followed you'
+				}
+
+				return {
+					username: user.rows[0].username,
+					content: content,
+				}
+			})
+		)
+
+		res.render('notifications', { userData: req.user.username, notifData: notifData })
 	}
 })
 
